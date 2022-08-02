@@ -108,10 +108,9 @@ class Episode(object):
 
     def _to_url(self, filepath):
         fn = os.path.basename(filepath)
-        path = STATIC_PATH + '/' + self.relative_dir + '/' + fn
+        path = f'{STATIC_PATH}/{self.relative_dir}/{fn}'
         path = re.sub(r'//', '/', path)
-        url = self.root_url + pathname2url(path)
-        return url
+        return self.root_url + pathname2url(path)
 
     @property
     def title(self):
@@ -123,7 +122,7 @@ class Episode(object):
                 text += str(val[0])
             val = self.id3.getall('COMM')
             if len(val) > 0:
-                text += ' ' + str(val[0])
+                text += f' {str(val[0])}'
         return text
 
     @property
@@ -177,7 +176,7 @@ class Episode(object):
             if ext.lower() in BOOK_COVER_EXTENSIONS:
                 image_files.append(fn)
 
-        if len(image_files) > 0:
+        if image_files:
             abs_path_image = image_files[0]
             return self._to_url(abs_path_image)
         else:
@@ -251,7 +250,7 @@ def serve(channel):
 def main():
     """Main function"""
     args = parser.parse_args()
-    url = 'http://' + args.host + ':' + args.port
+    url = f'http://{args.host}:{args.port}'
     channel = Channel(
         root_dir=path.abspath(args.directory),
         root_url=url,
@@ -275,8 +274,9 @@ def main():
 
 
 parser = argparse.ArgumentParser(
-    description='Podcats: podcast feed generator and server <%s>.' % __url__
+    description=f'Podcats: podcast feed generator and server <{__url__}>.'
 )
+
 parser.add_argument(
     '--host',
     default='localhost',
